@@ -21,7 +21,7 @@ data, meta = arff.loadarff(f)
 d = data.copy()
 
 ###replace missing values
-preprocess.preprocess(d, meta)
+preprocess.missing_values(d, meta)
 
 ###partition
 np.random.seed=(80085)

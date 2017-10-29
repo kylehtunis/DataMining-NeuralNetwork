@@ -7,7 +7,7 @@ Created on Fri Oct 27 18:21:55 2017
 
 import numpy as np
 
-def preprocess(data, meta):
+def missing_values(data, meta):
     
     
     #######useful variables
@@ -44,4 +44,4 @@ def z_score(data, meta):
         for sample in data:
             sample[i]=(sample[i]-mean)/std
         count+=1
-    print('Replaced values with z-scores for '+str(count)+' attributes.')
+#    print('Replaced values with z-scores for '+str(count)+' attributes.')
