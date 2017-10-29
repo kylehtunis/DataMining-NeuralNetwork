@@ -17,7 +17,7 @@ def transform(data, meta):
 #            print(pandas.get_dummies(data[att]).as_matrix()[0])
             tdata[att]=pandas.get_dummies(data[att]).as_matrix()
         else:
-            tdata[att]=data[att]
+            tdata[att]=[[data[att][i]] for i in range(len(data[att]))]
     
-    print(tdata)
+#    print(tdata)
     return tdata

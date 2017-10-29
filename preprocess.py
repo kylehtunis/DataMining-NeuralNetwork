@@ -19,7 +19,7 @@ def missing_values(data, meta):
     
     #######fix missing values
     count=0
-    for j in range(0,numOfAtts-1):
+    for j in range(0,numOfAtts):
         classCounts=np.ndarray((len(set(data[meta.names()[j]])),m))
         classCounts[:][:]=0
         l=set(data[meta.names()[j]])
