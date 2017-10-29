@@ -67,3 +67,6 @@ class Evaluator:
         print('Macro Recall: '+str(macroR))
         print('Macro F1: '+str(macroF))
         print('Accuracy: '+str(acc))
+        
+def evaluate(goldLabels, predLabels):
+    return

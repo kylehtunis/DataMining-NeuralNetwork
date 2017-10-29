@@ -6,3 +6,6 @@ Created on Fri Oct 27 18:21:55 2017
 """
 
 import numpy as np
+
+def preprocess(data, meta):
+    return

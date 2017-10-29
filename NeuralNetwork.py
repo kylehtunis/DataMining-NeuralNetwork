@@ -6,3 +6,12 @@ Created on Fri Oct 27 18:23:04 2017
 """
 
 import numpy as np
+
+class NeuralNetwork:
+    
+    
+    def __init__(self):
+        return
+    
+    def classify(self, data):
+        return

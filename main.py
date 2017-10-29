@@ -9,19 +9,20 @@ import numpy as np
 import scipy.io.arff as arff
 import sys
 import partition
-import NeuralNet
+import NeuralNetwork
 import DataTransform
 import evaluate
+import preprocess
 
 ###get data from file
 fileName=sys.argv[1]
 f=open(fileName, 'r')
-arff.loadarff(f)
+data, meta = arff.loadarff(f)
 
 ###partition
 d = data.copy()
-numpy.random.seed=(80085)
-numpy.random.shuffle(d)
+np.random.seed=(80085)
+np.random.shuffle(d)
 partitions=partition.partition(d)
 
 ###preproces and train 10 models
@@ -33,14 +34,14 @@ for i in range(len(partitions)):
     train=np.concatenate(partitions).copy()
     preprocess.preprocess(train, meta)
     nnData=DataTransform.transform(train, meta)
-    NeuralNet nn(nnData)
+    nn = NeuralNetwork.NeuralNetwork()
     models.append(nn)
     partitions.append(testCopy)
     
 ###classify test data
-results[]
+results=[]
 for i in range(len(models)):
-    results.append(m.classify(partitions[i]))
+    results.append(models[i].classify(partitions[i]))
     
 ###evaluate results
 for i in range(len(results)):
