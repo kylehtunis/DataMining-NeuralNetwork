@@ -18,9 +18,12 @@ import preprocess
 fileName=sys.argv[1]
 f=open(fileName, 'r')
 data, meta = arff.loadarff(f)
+d = data.copy()
+
+###replace missing values
+preprocess.preprocess(d, meta)
 
 ###partition
-d = data.copy()
 np.random.seed=(80085)
 np.random.shuffle(d)
 partitions=partition.partition(d)
@@ -32,11 +35,13 @@ for i in range(len(partitions)):
     test=partitions.pop(0)
     testCopy=test.copy()
     train=np.concatenate(partitions).copy()
-    preprocess.preprocess(train, meta)
+    preprocess.z_score(train, meta)
+#    print(train)
     nnData=DataTransform.transform(train, meta)
     nn = NeuralNetwork.NeuralNetwork()
     models.append(nn)
     partitions.append(testCopy)
+    print()
     
 ###classify test data
 results=[]
