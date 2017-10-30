@@ -26,7 +26,7 @@ preprocess.missing_values(d, meta)
 ###partition
 np.random.seed=(8008)
 np.random.shuffle(d)
-partitions=partition.partition(d)
+partitions=partition.partition(d, 5)
 
 ###get training parameters
 
