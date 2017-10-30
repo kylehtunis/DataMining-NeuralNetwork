@@ -33,6 +33,11 @@ class NeuralNetwork:
         self.bo=np.random.rand(self.outputsize,1)
         self.Wo=np.random.rand(self.hidden,self.outputsize)
         for epoch in range(self.epochs):
+            learningRate=1
+            if self.learningRate==-1:
+                learningRate=1./epoch
+            else:
+                learningRate=self.learningRate
 #            print('Epoch '+str(epoch)+'\r')
             for i in range(len(data[meta.names()[0]])):
                 ###get sample
@@ -54,13 +59,13 @@ class NeuralNetwork:
 #                print(oErr)
                 for j in range(self.outputsize):
                     for i in range(self.hidden):
-                        self.Wo[i][j]+=self.learningRate*oErr[j]*Oh[i]
-                    self.bo[j]+=self.learningRate*oErr[j]
+                        self.Wo[i][j]+=learningRate*oErr[j]*Oh[i]
+                    self.bo[j]+=learningRate*oErr[j]
                 hErr=[Oh[j]*(1-Oh[j])*sum(oErr[k]*self.Wo[j][k] for k in range(len(oErr))) for j in range(self.hidden)]
                 for j in range(self.hidden):
                     for i in range(self.inputsize):
-                        self.Wh[i][j]+=self.learningRate*hErr[j]*Oi[i]
-                    self.bh[j]+=self.learningRate*hErr[j]
+                        self.Wh[i][j]+=learningRate*hErr[j]*Oi[i]
+                    self.bh[j]+=learningRate*hErr[j]
 #            print(oErr)
         
     
