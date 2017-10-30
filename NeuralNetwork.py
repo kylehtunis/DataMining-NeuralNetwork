@@ -16,7 +16,7 @@ class NeuralNetwork:
         if 'hidden' not in kwargs.keys():
             kwargs['hidden']=10
         if 'learningRate' not in kwargs.keys():
-            kwargs['learningRate']=.1
+            kwargs['learningRate']=-1
         if 'epochs' not in kwargs.keys():
             kwargs['epochs']=100
         self.hidden=kwargs['hidden']
@@ -36,10 +36,10 @@ class NeuralNetwork:
         for epoch in range(self.epochs):
             learningRate=1
             if self.learningRate==-1:
-                learningRate=1./epoch
+                learningRate=1./(epoch+1)
             else:
                 learningRate=self.learningRate
-#            print('Epoch '+str(epoch)+'\r')
+            print('Epoch '+str(epoch)+'\r')
             for i in range(len(data[meta.names()[0]])):
                 ###get sample
                 Oi=[]
