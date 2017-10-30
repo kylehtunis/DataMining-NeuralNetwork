@@ -6,6 +6,7 @@ Created on Fri Oct 27 18:23:04 2017
 """
 
 import numpy as np
+import pandas
 
 class NeuralNetwork:
     
@@ -13,16 +14,73 @@ class NeuralNetwork:
     def __init__(self, **kwargs):
         if 'hidden' not in kwargs.keys():
             kwargs['hidden']=10
+        if 'learningRate' not in kwargs.keys():
+            kwargs['learningRate']=.1
+        if 'epochs' not in kwargs.keys():
+            kwargs['epochs']=100
         self.hidden=kwargs['hidden']
+        self.learningRate=kwargs['learningRate']
+        self.epochs=kwargs['epochs']
         self.bh=np.random.rand(kwargs['hidden'],1)/5
         
+        
     def train(self, data, meta):
-        inputsize=sum(len(data[att][0]) for att in meta.names()[:-1])
+        ###initialize weight vectors
+        self.inputsize=sum(len(data[att][0]) for att in meta.names()[:-1])
 #        print(inputsize)
-        self.Wh=np.random.rand(inputsize,self.hidden)
-        outputsize=len(data[meta.names()[-1]][0])
-        self.bo=np.random.rand(outputsize,1)
-        self.Wo=np.random.rand(self.hidden,outputsize)
+        self.Wh=np.random.rand(self.inputsize,self.hidden)
+        self.outputsize=len(data[meta.names()[-1]][0])
+        self.bo=np.random.rand(self.outputsize,1)
+        self.Wo=np.random.rand(self.hidden,self.outputsize)
+        for epoch in range(self.epochs):
+#            print('Epoch '+str(epoch)+'\r')
+            for i in range(len(data[meta.names()[0]])):
+                ###get sample
+                Oi=[]
+                for t, att in enumerate(meta.names()[:-1]):
+                    if meta.types()[t]=='nominal':
+                        Oi+=data[att][i].tolist()
+                    else:
+                        Oi+=data[att][i]
+                pred, Oh=self.classifySample(np.array(Oi).reshape((len(Oi),1)))
+    #            print(Oh)
+    #            pred=pred.tolist()
+    #            print(pred)
+                gold=data[meta.names()[-1]][i].tolist()
+    #            print(gold)
+                
+                ###calculate errors and update weights
+                oErr=[pred[j]*(1-pred[j])*(gold[j]-pred[j]) for j in range(self.outputsize)]
+#                print(oErr)
+                for j in range(self.outputsize):
+                    for i in range(self.hidden):
+                        self.Wo[i][j]+=self.learningRate*oErr[j]*Oh[i]
+                    self.bo[j]+=self.learningRate*oErr[j]
+                hErr=[Oh[j]*(1-Oh[j])*sum(oErr[k]*self.Wo[j][k] for k in range(len(oErr))) for j in range(self.hidden)]
+                for j in range(self.hidden):
+                    for i in range(self.inputsize):
+                        self.Wh[i][j]+=self.learningRate*hErr[j]*Oi[i]
+                    self.bh[j]+=self.learningRate*hErr[j]
+#            print(oErr)
+        
     
     def classify(self, data):
         return
+        
+    def classifySample(self, sample):
+        ###calculate hidden layer outputs
+        Wht=np.transpose(self.Wh)
+#        print(Wht.shape)
+#        print(sample.shape)
+        Oh=np.array([self.sigmoid(np.dot(Wht,sample)[i]+self.bh[i]) for i in range(self.hidden)])
+#        print(Oh.shape)
+
+        ###calculate output layer outpus
+        Wot=np.transpose(self.Wo)
+#        print(Wot.shape)
+        Oo=[self.sigmoid((np.dot(Wot,Oh)[i]+self.bo[i])[0]) for i in range(self.outputsize)]
+#        print(Oo)
+        return Oo, [element[0] for element in Oh]
+        
+    def sigmoid(self, val):
+        return 1./(1+np.exp(val))
