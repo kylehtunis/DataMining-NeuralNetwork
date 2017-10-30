@@ -51,13 +51,16 @@ class NeuralNetwork:
                 pred, Oh=self.classifySample(np.array(Oi).reshape((len(Oi),1)))
     #            print(Oh)
     #            pred=pred.tolist()
-    #            print(pred)
+#                print(pred)
                 gold=data[meta.names()[-1]][i].tolist()
-    #            print(gold)
+#                print(gold)
                 
                 ###calculate errors and update weights
                 oErr=[pred[j]*(1-pred[j])*(gold[j]-pred[j]) for j in range(self.outputsize)]
-#                print(oErr)
+                if sum(oErr)==1 and 1 in oErr:
+                    print('Converged during epoch #'+str(epoch))
+                    break
+#                print(str(oErr)+'\n')
                 for j in range(self.outputsize):
                     for i in range(self.hidden):
                         self.Wo[i][j]+=learningRate*oErr[j]*Oh[i]
@@ -102,4 +105,4 @@ class NeuralNetwork:
         return Oo, [element[0] for element in Oh]
         
     def sigmoid(self, val):
-        return 1./(1+np.exp(val))
+        return 1./(1+np.exp(-1*val))

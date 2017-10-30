@@ -40,7 +40,7 @@ for i in range(len(partitions)):
     preprocess.z_score(train, meta)
 #    print(train)
     nnData=DataTransform.transform(train, meta)
-    nn = NeuralNetwork.NeuralNetwork()
+    nn = NeuralNetwork.NeuralNetwork(hidden=1000)
     nn.train(nnData, meta)
     models.append(nn)
     partitions.append(testCopy)
@@ -48,13 +48,13 @@ for i in range(len(partitions)):
     
 ###classify test data
 results=[]
+goldLabels=[]
 for i in range(len(models)):
-    results.append(models[i].classify(partitions[i], meta))
-    goldLabels=DataTransform.getGoldLabels(partitions[i], meta)
-    for j in range(len(partitions[i])):
-        print(goldLabels[j])
-        print(results[i][j])
-    
-###evaluate results
-for i in range(len(results)):
-    evaluate.evaluate(results[i], partitions[i])
+    results.append(np.argmax(models[i].classify(partitions[i], meta)))
+    goldLabels.append(np.argmax(DataTransform.getGoldLabels(partitions[i], meta)))
+#    for j in range(len(partitions[i])):
+#        print(goldLabels[j])
+#        print(results[i][j])
+    ###evaluate results
+    e=evaluate.Evaluator(goldLabels[i], results[i])
+    print('Accuracy='+str(e.getAccuracy()))
