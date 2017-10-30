@@ -83,7 +83,7 @@ class NeuralNetwork:
 #            print(nnSample)
             classification=self.classifySample(np.array(nnSample).reshape(len(nnSample),1))[0]
 #            print(classification)
-            results.append(np.argmax(classification))
+            results.append(classification)
         return results
         
     def classifySample(self, sample):
