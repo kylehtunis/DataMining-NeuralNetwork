@@ -7,6 +7,7 @@ Created on Fri Oct 27 18:23:04 2017
 
 import numpy as np
 import pandas
+import DataTransform
 
 class NeuralNetwork:
     
@@ -69,8 +70,21 @@ class NeuralNetwork:
 #            print(oErr)
         
     
-    def classify(self, data):
-        return
+    def classify(self, data, meta):
+        nnData=DataTransform.transform(data, meta)
+        results=[]
+        for i in range(len(data)):
+            nnSample=[]
+            for t, att in enumerate(meta.names()[:-1]):
+                if meta.types()[t]=='nominal':
+                    nnSample+=nnData[att][i].tolist()
+                else:
+                    nnSample+=nnData[att][i]
+#            print(nnSample)
+            classification=self.classifySample(np.array(nnSample).reshape(len(nnSample),1))[0]
+#            print(classification)
+            results.append(np.argmax(classification))
+        return results
         
     def classifySample(self, sample):
         ###calculate hidden layer outputs

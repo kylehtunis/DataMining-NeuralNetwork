@@ -21,3 +21,8 @@ def transform(data, meta):
     
 #    print(tdata)
     return tdata
+
+def getGoldLabels(data, meta):
+    tdata=transform(data, meta)
+    labels = [tdata[meta.names()[-1]][i] for i in range(len(data))]
+    return labels
