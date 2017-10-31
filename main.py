@@ -40,7 +40,7 @@ for i in range(len(partitions)):
     preprocess.z_score(train, meta)
 #    print(train)
     nnData=DataTransform.transform(train, meta)
-    nn = NeuralNetwork.NeuralNetwork(epochs=10)
+    nn = NeuralNetwork.NeuralNetwork(epochs=1, hidden=5)
     nn.train(nnData, meta)
     models.append(nn)
     partitions.append(testCopy)

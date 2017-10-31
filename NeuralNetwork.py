@@ -19,9 +19,12 @@ class NeuralNetwork:
             kwargs['learningRate']=-1
         if 'epochs' not in kwargs.keys():
             kwargs['epochs']=100
+        if 'minError' not in kwargs.keys():
+            kwargs['minError']=0
         self.hidden=kwargs['hidden']
         self.learningRate=kwargs['learningRate']
         self.epochs=kwargs['epochs']
+        self.minError=kwargs['minError']
         self.bh=np.random.rand(kwargs['hidden'],1)/5
         
         
@@ -57,9 +60,6 @@ class NeuralNetwork:
                 
                 ###calculate errors and update weights
                 oErr=[pred[j]*(1-pred[j])*(gold[j]-pred[j]) for j in range(self.outputsize)]
-                if sum(oErr)==1 and 1 in oErr:
-                    print('Converged during epoch #'+str(epoch))
-                    break
 #                print(str(oErr)+'\n')
                 for j in range(self.outputsize):
                     for i in range(self.hidden):
@@ -71,6 +71,8 @@ class NeuralNetwork:
                         self.Wh[i][j]+=learningRate*hErr[j]*Oi[i]
                     self.bh[j]+=learningRate*hErr[j]
 #            print(oErr)
+            if sum(abs(e) for e in oErr)<=self.minError:
+                break
         
     
     def classify(self, data, meta):
