@@ -30,6 +30,11 @@ partitions=partition.partition(d, 5)
 
 ###get training parameters
 
+###get range of each attribute
+ranges={}
+for att in meta.names():
+    ranges[att]=list(set(d[att]))
+
 ###preproces and train 10 models
 models=[]
 for i in range(len(partitions)):
@@ -39,22 +44,32 @@ for i in range(len(partitions)):
     print('Training Model '+str(i+1)+' ('+str(len(train))+' samples)')
     preprocess.z_score(train, meta)
 #    print(train)
-    nnData=DataTransform.transform(train, meta)
-    nn = NeuralNetwork.NeuralNetwork(epochs=1, hidden=5)
+    nnData=DataTransform.transform(train, meta, ranges)
+#    print(nnData)
+    nn = NeuralNetwork.NeuralNetwork(epochs=1000, hidden=8, minError=.005, learningRate=-1)
     nn.train(nnData, meta)
     models.append(nn)
-    partitions.append(testCopy)
+    partitions.append(test)
     print()
     
 ###classify test data
-results=[]
-goldLabels=[]
-for i in range(len(models)):
-    results.append([np.argmax(models[i].classify(partitions[i], meta)[j]) for j in range(len(partitions[i]))])
-    goldLabels.append([np.argmax(DataTransform.getGoldLabels(partitions[i], meta)[j]) for j in range(len(partitions[i]))])
-#    for j in range(len(partitions[i])):
-#        print(goldLabels[j])
-#        print(results[i][j])
-    ###evaluate results
-    e=evaluate.Evaluator(goldLabels[i], results[i])
+#results=[]
+#goldLabels=[]
+#for i in range(len(models)):
+#    results.append([np.argmax(models[i].classify(partitions[i], meta)[j]) for j in range(len(partitions[i]))])
+#    goldLabels.append([np.argmax(DataTransform.getGoldLabels(partitions[i], meta, ranges)[j]) for j in range(len(partitions[i]))])
+##    for j in range(len(partitions[i])):
+##        print(goldLabels[j])
+##        print(results[i][j])
+#    ###evaluate results
+#    e=evaluate.Evaluator(goldLabels[i], results[i])
+#    print('Accuracy='+str(e.getAccuracy()))
+for i, model in enumerate(models):
+    nnData=DataTransform.transform(partitions[i], meta, ranges)
+#    print(nnData)
+    results=model.classify(nnData, meta)
+#    print(results)
+    goldLabels=DataTransform.getGoldLabels(partitions[i], meta, ranges)
+#    print(goldLabels)
+    e=evaluate.Evaluator(goldLabels, results)
     print('Accuracy='+str(e.getAccuracy()))

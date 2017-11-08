@@ -8,21 +8,24 @@ Created on Fri Oct 27 18:23:50 2017
 import numpy as np
 import pandas
 
-def transform(data, meta):
+def transform(data, meta, ranges):
     
     tdata={}
     
     for i, att in enumerate(meta.names()):
         if meta.types()[i]=='nominal':
 #            print(pandas.get_dummies(data[att]).as_matrix()[0])
-            tdata[att]=pandas.get_dummies(data[att]).as_matrix()
+            tdata[att]=pandas.get_dummies(data[att])
+            tdata[att].T.reindex(ranges).T.fillna(0)
+            tdata[att]=tdata[att].as_matrix()
+#            print(tdata)
         else:
             tdata[att]=[[data[att][i]] for i in range(len(data[att]))]
     
 #    print(tdata)
     return tdata
 
-def getGoldLabels(data, meta):
-    tdata=transform(data, meta)
-    labels = [tdata[meta.names()[-1]][i] for i in range(len(data))]
+def getGoldLabels(data, meta, ranges):
+    tdata=transform(data, meta, ranges)
+    labels = [np.argmax(tdata[meta.names()[-1]][i]) for i in range(len(data))]
     return labels

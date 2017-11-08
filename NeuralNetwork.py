@@ -6,7 +6,6 @@ Created on Fri Oct 27 18:23:04 2017
 """
 
 import numpy as np
-import pandas
 import DataTransform
 
 class NeuralNetwork:
@@ -16,7 +15,7 @@ class NeuralNetwork:
         if 'hidden' not in kwargs.keys():
             kwargs['hidden']=10
         if 'learningRate' not in kwargs.keys():
-            kwargs['learningRate']=-1
+            kwargs['learningRate']=.1
         if 'epochs' not in kwargs.keys():
             kwargs['epochs']=100
         if 'minError' not in kwargs.keys():
@@ -37,12 +36,13 @@ class NeuralNetwork:
         self.bo=np.random.rand(self.outputsize,1)
         self.Wo=np.random.rand(self.hidden,self.outputsize)
         for epoch in range(self.epochs):
+            avgErr=0.
             learningRate=1
-            if self.learningRate==-1:
-                learningRate=1./(epoch+1)
+            if self.learningRate==-1 and epoch<=100:
+                learningRate=1./np.sqrt(epoch+1)
             else:
                 learningRate=self.learningRate
-            print('Epoch '+str(epoch)+'\r')
+#            print('Epoch '+str(epoch)+'\r')
             for i in range(len(data[meta.names()[0]])):
                 ###get sample
                 Oi=[]
@@ -71,24 +71,29 @@ class NeuralNetwork:
                         self.Wh[i][j]+=learningRate*hErr[j]*Oi[i]
                     self.bh[j]+=learningRate*hErr[j]
 #            print(oErr)
-            if sum(abs(e) for e in oErr)<=self.minError:
+                avgErr+=sum(abs(e) for e  in oErr)/len(data[meta.names()[0]])
+#            print(avgErr)
+            if avgErr<=self.minError:
+                print('Reached min error after ',epoch,' epochs')
+                epoch=self.epochs
                 break
-        
+        if epoch==self.epochs-1:
+            print('Reached maximum epochs')
     
     def classify(self, data, meta):
-        nnData=DataTransform.transform(data, meta)
+#        nnData=DataTransform.transform(data, meta)
         results=[]
-        for i in range(len(data)):
+        for i in range(len(data[meta.names()[0]])):
             nnSample=[]
             for t, att in enumerate(meta.names()[:-1]):
                 if meta.types()[t]=='nominal':
-                    nnSample+=nnData[att][i].tolist()
+                    nnSample+=data[att][i].tolist()
                 else:
-                    nnSample+=nnData[att][i]
+                    nnSample+=data[att][i]
 #            print(nnSample)
             classification=self.classifySample(np.array(nnSample).reshape(len(nnSample),1))[0]
 #            print(classification)
-            results.append(classification)
+            results.append(np.argmax(classification))
         return results
         
     def classifySample(self, sample):

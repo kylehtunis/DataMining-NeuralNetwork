@@ -26,12 +26,16 @@ def missing_values(data, meta):
         l=list(l)
         for k in range(0, n):
             classCounts[l.index(data[k][j])][classes.index(data[k][-1])]+=1
+        if b'?' in l:
+            classCounts[l.index(b'?')][:]=0
         for i in range(0,n):
             if data[i][j]==b'?':
+#                print(data[i][j])
                 c=data[i][-1]
-                data[i][j]=l[classCounts[classes.index(c)].tolist().index(max(classCounts[classes.index(c)][:]))]
+                data[i][j]=l[classCounts[:,classes.index(c)].tolist().index(max(classCounts[:,classes.index(c)]))]
                 count+=1
     print('Replaced '+str(count)+' missing values.')
+    return data
     
 def z_score(data, meta): 
     
