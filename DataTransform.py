@@ -18,8 +18,9 @@ def transform(data, meta, ranges):
             tdata[att]=pandas.get_dummies(data[att])
             missing_cols=set(ranges[att])-set(data[att])
             for col in missing_cols:
-                print(col)
+#                print(col)
                 tdata[att][col] = 0
+                print('Data transform resulted in an incomplete set, added "',att,'" to complete the set')
             tdata[att]=tdata[att].as_matrix()
 #            print(tdata)
         else:

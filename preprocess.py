@@ -34,7 +34,7 @@ def missing_values(data, meta):
                 c=data[i][-1]
                 data[i][j]=l[classCounts[:,classes.index(c)].tolist().index(max(classCounts[:,classes.index(c)]))]
                 count+=1
-    print('Replaced '+str(count)+' missing values.')
+    print('Replaced '+str(count)+' missing values.\n')
     return data
     
 def z_score(data, meta): 

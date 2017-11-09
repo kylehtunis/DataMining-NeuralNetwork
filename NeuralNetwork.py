@@ -42,7 +42,7 @@ class NeuralNetwork:
                 learningRate=1./np.sqrt(epoch+1)
             else:
                 learningRate=self.learningRate
-            print('Epoch '+str(epoch)+'\r')
+            print('Epoch '+str(epoch+1)+'\r')
             for i in range(len(data[meta.names()[0]])):
                 ###get sample
                 Oi=[]

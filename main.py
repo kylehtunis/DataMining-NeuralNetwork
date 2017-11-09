@@ -49,7 +49,7 @@ for i in range(len(partitions)):
 #    print(train)
     nnData=DataTransform.transform(train, meta, ranges)
 #    print(nnData)
-    nn = NeuralNetwork.NeuralNetwork(epochs=10, hidden=8, minError=.01, learningRate=.1)
+    nn = NeuralNetwork.NeuralNetwork(epochs=100, hidden=10, minError=.01, learningRate=.1)
     nn.train(nnData, meta)
     models.append(nn)
     partitions.append(test)
