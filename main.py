@@ -32,8 +32,11 @@ partitions=partition.partition(d, 5)
 
 ###get range of each attribute
 ranges={}
-for att in meta.names():
-    ranges[att]=list(set(d[att]))
+for i,att in enumerate(meta.names()):
+    if meta.types()[i]=='nominal':
+        ranges[att]=list(set(d[att]))
+    else:
+        ranges[att]=['#']
 
 ###preproces and train 10 models
 models=[]
@@ -46,7 +49,7 @@ for i in range(len(partitions)):
 #    print(train)
     nnData=DataTransform.transform(train, meta, ranges)
 #    print(nnData)
-    nn = NeuralNetwork.NeuralNetwork(epochs=1000, hidden=8, minError=.005, learningRate=-1)
+    nn = NeuralNetwork.NeuralNetwork(epochs=10, hidden=8, minError=.01, learningRate=.1)
     nn.train(nnData, meta)
     models.append(nn)
     partitions.append(test)

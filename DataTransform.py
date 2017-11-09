@@ -16,7 +16,10 @@ def transform(data, meta, ranges):
         if meta.types()[i]=='nominal':
 #            print(pandas.get_dummies(data[att]).as_matrix()[0])
             tdata[att]=pandas.get_dummies(data[att])
-            tdata[att].T.reindex(ranges).T.fillna(0)
+            missing_cols=set(ranges[att])-set(data[att])
+            for col in missing_cols:
+                print(col)
+                tdata[att][col] = 0
             tdata[att]=tdata[att].as_matrix()
 #            print(tdata)
         else:
