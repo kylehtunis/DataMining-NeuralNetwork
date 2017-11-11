@@ -14,13 +14,18 @@ def transform(data, meta, ranges):
     
     for i, att in enumerate(meta.names()):
         if meta.types()[i]=='nominal':
-#            print(pandas.get_dummies(data[att]).as_matrix()[0])
             tdata[att]=pandas.get_dummies(data[att])
+            print(tdata[att].keys())
             missing_cols=set(ranges[att])-set(data[att])
+            if len(missing_cols)>0:
+                print(missing_cols)
             for col in missing_cols:
 #                print(col)
                 tdata[att][col] = 0
-                print('Data transform resulted in an incomplete set, added "',att,'" to complete the set')
+                print('Data transform resulted in an incomplete set, added "',att,': ',col,'" to complete the set')
+            tdata[att].sort_index(axis=1, inplace=True)
+            print(ranges[att])
+            print(tdata[att].keys())
             tdata[att]=tdata[att].as_matrix()
 #            print(tdata)
         else:

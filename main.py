@@ -24,7 +24,7 @@ d = data.copy()
 preprocess.missing_values(d, meta)
 
 ###partition
-#np.random.seed=(8008)
+np.random.seed=(1)
 np.random.shuffle(d)
 partitions=partition.partition(d, 5)
 
@@ -49,7 +49,7 @@ for i in range(len(partitions)):
 #    print(train)
     nnData=DataTransform.transform(train, meta, ranges)
 #    print(nnData)
-    nn = NeuralNetwork.NeuralNetwork(epochs=100, hidden=10, minError=.01, learningRate=.1)
+    nn = NeuralNetwork.NeuralNetwork(epochs=100, hidden=8, minError=.01, learningRate=-1)
     nn.train(nnData, meta)
     models.append(nn)
     partitions.append(test)
