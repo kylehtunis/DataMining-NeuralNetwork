@@ -24,7 +24,7 @@ d = data.copy()
 preprocess.missing_values(d, meta)
 
 ###partition
-np.random.seed=(1)
+#np.random.seed=(1)
 np.random.shuffle(d)
 partitions=partition.partition(d, 5)
 
@@ -49,7 +49,7 @@ for i in range(len(partitions)):
 #    print(train)
     nnData=DataTransform.transform(train, meta, ranges)
 #    print(nnData)
-    nn = NeuralNetwork.NeuralNetwork(epochs=100, hidden=8, minError=.01, learningRate=-1)
+    nn = NeuralNetwork.NeuralNetwork(epochs=1000, hidden=10, minError=.001, learningRate=.5)
     nn.train(nnData, meta)
     models.append(nn)
     partitions.append(test)
@@ -68,11 +68,13 @@ for i in range(len(partitions)):
 #    e=evaluate.Evaluator(goldLabels[i], results[i])
 #    print('Accuracy='+str(e.getAccuracy()))
 for i, model in enumerate(models):
-    nnData=DataTransform.transform(partitions[i], meta, ranges)
+    test=partitions[i].copy()
+    preprocess.z_score(test, meta)
+    nnData=DataTransform.transform(test, meta, ranges)
 #    print(nnData)
     results=model.classify(nnData, meta)
 #    print(results)
-    goldLabels=DataTransform.getGoldLabels(partitions[i], meta, ranges)
+    goldLabels=DataTransform.getGoldLabels(test, meta, ranges)
 #    print(goldLabels)
     e=evaluate.Evaluator(goldLabels, results)
     print('Accuracy='+str(e.getAccuracy()))

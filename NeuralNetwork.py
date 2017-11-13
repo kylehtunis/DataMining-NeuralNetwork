@@ -42,7 +42,7 @@ class NeuralNetwork:
                 learningRate=1./np.sqrt(epoch+1)
             else:
                 learningRate=self.learningRate
-            print('Epoch '+str(epoch+1)+'\r')
+#            print('Epoch '+str(epoch+1)+'\r')
             for i in range(len(data[meta.names()[0]])):
                 ###get sample
                 Oi=[]
@@ -52,7 +52,7 @@ class NeuralNetwork:
                     else:
                         Oi+=data[att][i]
                 pred, Oh=self.classifySample(np.array(Oi).reshape((len(Oi),1)))
-    #            print(Oh)
+#                print(Oh)
     #            pred=pred.tolist()
 #                print(pred)
                 gold=data[meta.names()[-1]][i].tolist()
@@ -74,12 +74,13 @@ class NeuralNetwork:
                 avgErr+=sum(abs(e) for e  in oErr)/len(data[meta.names()[0]])
 #            print('AvgErr: ', avgErr)
             if avgErr<=self.minError:
-                print('Reached min error after ',epoch,' epochs')
+                print('Reached min error after ',epoch+1,' epochs')
                 epoch=self.epochs
                 break
-            avgErr=0
+#            avgErr=0
         if epoch==self.epochs-1:
             print('Reached maximum epochs')
+        print('AvgErr: ', avgErr)
     
     def classify(self, data, meta):
 #        nnData=DataTransform.transform(data, meta)
@@ -108,7 +109,7 @@ class NeuralNetwork:
         ###calculate output layer outpus
         Wot=np.transpose(self.Wo)
 #        print(Wot.shape)
-        Oo=[self.sigmoid((np.dot(Wot,Oh)[i]+self.bo[i])[0]) for i in range(self.outputsize)]
+        Oo=[self.sigmoid(np.dot(Wot[i],Oh)+self.bo[i])[0] for i in range(self.outputsize)]
 #        print(Oo)
         return Oo, [element[0] for element in Oh]
         
