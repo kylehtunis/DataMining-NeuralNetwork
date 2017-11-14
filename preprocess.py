@@ -35,7 +35,7 @@ def missing_values(data, meta):
                 data[i][j]=l[classCounts[:,classes.index(c)].tolist().index(max(classCounts[:,classes.index(c)]))]
                 count+=1
     print('Replaced '+str(count)+' missing values.\n')
-    return data
+#    return data
     
 def z_score(data, meta): 
     
@@ -49,3 +49,37 @@ def z_score(data, meta):
             sample[i]=(sample[i]-mean)/std
         count+=1
 #    print('Replaced values with z-scores for '+str(count)+' attributes.')
+
+def groupByContinent(data):
+    asia=[b'Hong', b'Vietnam', b'Thailand', b'India', b'China', b'Japan', b'Laos', b'Philippines', b'Taiwan', b'Iran', b'Cambodia']
+    na=[b'Trinadad&Tobago', b'Cuba', b'Jamaica', b'Puerto-Rico', b'United-States', b'Haiti', b'Outlying-US(Guam-USVI-etc)', b'Canada', b'Dominican-Republic']
+    csa=[b'Guatemala', b'Peru', b'Honduras', b'Ecuador', b'Mexico', b'El-Salvador', b'Nicaragua', b'Columbia']
+    europe=[b'Ireland', b'Germany', b'Scotland', b'France', b'Holand-Netherlands', b'Hungary', b'Portugal', b'Yugoslavia', b'England', b'Greece', b'Italy', b'Poland']
+    for i, sample in enumerate(data):
+        if sample['native-country'] in asia:
+            sample['native-country']=b'Asia'
+        elif sample['native-country'] in csa:
+            sample['native-country']=b'Central-South-America'
+        elif sample['native-country'] in na:
+            sample['native-country']=b'North-America'
+        elif sample['native-country'] in europe:
+            sample['native-country']=b'Europe'
+#    return data
+
+def groupEducation(data):
+    shs=[b'11th', b'9th', b'12th', b'12th']
+    nhs=[b'1st-4th', b'5th-6th', 'Preschool', b'7th-8th']
+    for sample in data:
+        if sample['education'] in shs:
+            sample['education']=b'Some-high-school'
+        elif sample['education'] in nhs:
+            sample['education']=b'No-high-school'
+            
+def groupMarried(data):
+    married=[b'Married-spouse-absent', b'Married-AF-spouse', b'Married-civ-spouse']
+    for sample in data:
+        if sample['marital-status'] in married:
+            sample['marital-status']=b'Married'
+        elif sample['marital-status'] != b'Never-married':
+            sample['marital-status']='Formerly-married'
+        

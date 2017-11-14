@@ -77,10 +77,12 @@ class NeuralNetwork:
                 print('Reached min error after ',epoch+1,' epochs')
                 epoch=self.epochs
                 break
+            if epoch==0:
+                print('AvgErr after 1 epoch:', avgErr)
 #            avgErr=0
         if epoch==self.epochs-1:
             print('Reached maximum epochs')
-        print('AvgErr: ', avgErr)
+        print('AvgErr after last epoch: ', avgErr)
     
     def classify(self, data, meta):
 #        nnData=DataTransform.transform(data, meta)
@@ -114,4 +116,4 @@ class NeuralNetwork:
         return Oo, [element[0] for element in Oh]
         
     def sigmoid(self, val):
-        return 1./(1+np.exp(-1*val))
+        return 1./(1+np.e**-val)

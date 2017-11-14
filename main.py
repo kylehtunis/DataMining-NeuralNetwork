@@ -20,8 +20,15 @@ f=open(fileName, 'r')
 data, meta = arff.loadarff(f)
 d = data.copy()
 
+print('Preprocessing\n')
 ###replace missing values
 preprocess.missing_values(d, meta)
+
+#use domain knowledge to group attributes
+preprocess.groupByContinent(d)
+preprocess.groupEducation(d)
+preprocess.groupMarried(d)
+#print(d)
 
 ###partition
 #np.random.seed=(1)
@@ -37,6 +44,7 @@ for i,att in enumerate(meta.names()):
         ranges[att]=list(set(d[att]))
     else:
         ranges[att]=['#']
+#ranges['native-country']=[b'North-America', b'Central-South-America', b'Europe', b'Asia', b'Africa', b'Oceania']
 
 ###preproces and train 10 models
 models=[]
@@ -49,32 +57,27 @@ for i in range(len(partitions)):
 #    print(train)
     nnData=DataTransform.transform(train, meta, ranges)
 #    print(nnData)
-    nn = NeuralNetwork.NeuralNetwork(epochs=1000, hidden=10, minError=.001, learningRate=.5)
+    nn = NeuralNetwork.NeuralNetwork(epochs=10, hidden=25, minError=.005, learningRate=1)
     nn.train(nnData, meta)
     models.append(nn)
     partitions.append(test)
     print()
-    
-###classify test data
-#results=[]
-#goldLabels=[]
-#for i in range(len(models)):
-#    results.append([np.argmax(models[i].classify(partitions[i], meta)[j]) for j in range(len(partitions[i]))])
-#    goldLabels.append([np.argmax(DataTransform.getGoldLabels(partitions[i], meta, ranges)[j]) for j in range(len(partitions[i]))])
-##    for j in range(len(partitions[i])):
-##        print(goldLabels[j])
-##        print(results[i][j])
-#    ###evaluate results
-#    e=evaluate.Evaluator(goldLabels[i], results[i])
-#    print('Accuracy='+str(e.getAccuracy()))
+
+###evaluate results
 for i, model in enumerate(models):
     test=partitions[i].copy()
     preprocess.z_score(test, meta)
     nnData=DataTransform.transform(test, meta, ranges)
-#    print(nnData)
+    #    print(nnData)
     results=model.classify(nnData, meta)
-#    print(results)
+    #    print(results)
     goldLabels=DataTransform.getGoldLabels(test, meta, ranges)
-#    print(goldLabels)
+    #    print(goldLabels)
     e=evaluate.Evaluator(goldLabels, results)
+    e.confusionMatrices()
+    e.measures()
     print('Accuracy='+str(e.getAccuracy()))
+    print('Macro Precision=',e.macroPrecision)
+    print('Macro Recall=',e.macroRecall)
+    print('Macro F1=',e.macroF1)
+    print()
