@@ -21,6 +21,17 @@ f=open(fileName, 'r')
 data, meta = arff.loadarff(f)
 d = data.copy()
 
+###get training parameters
+parser = argparse.ArgumentParser()  
+parser.add_argument('-e', '--epochs', help='set number of epochs', default=10)
+parser.add_argument('-H', '--hidden', help='set number of hidden layer nodes', default=10)
+parser.add_argument('-r', '--rate', help='set learning rate', default=.2)
+args=parser.parse_args()
+epochs=args.epochs
+rate=args.rate
+hidden=args.hidden
+print('Running for',epochs,'epochs,',hidden,'hidden nodes, and with a learning rate of ',rate)
+
 print('Preprocessing\n')
 ###replace missing values
 preprocess.missing_values(d, meta)
@@ -35,17 +46,6 @@ preprocess.groupMarried(d)
 #np.random.seed=(1)
 np.random.shuffle(d)
 partitions=partition.partition(d, 5)
-
-###get training parameters
-parser = argparse.ArgumentParser()  
-parser.add_argument('-e', '--epochs', help='set number of epochs', default=10)
-parser.add_argument('-H', '--hidden', help='set number of hidden layer nodes', default=10)
-parser.add_argument('-r', '--rate', help='set learning rate', default=.2)
-args=parser.parse_args()
-epochs=args.epochs
-rate=args.rate
-hidden=args.hidden
-print('Running for ',epochs,' epochs, ',hidden,' hidden nodes, and with a learning rate of ',rate,'.')
 
 ###get range of each attribute
 ranges={}
