@@ -32,7 +32,7 @@ rate=float(args.rate)
 hidden=int(args.hidden)
 print('Running for',epochs,'epochs,',hidden,'hidden nodes, and with a learning rate of',rate)
 
-print('Preprocessing\n')
+print('\nPreprocessing\n')
 ###replace missing values
 preprocess.missing_values(d, meta)
 
@@ -65,34 +65,33 @@ for i in range(len(partitions)):
     test=partitions.pop(0)
     testCopy=test.copy()
     train=np.concatenate(partitions).copy()
-    print('Training Model '+str(i+1)+' ('+str(len(train))+' samples)')
     preprocess.z_score(train, meta)
 #    print(train)
-    nnData=DataTransform.transform(train, meta, ranges)
+    print('Transforming Data for Model',i+1)
+    nnData, gold=DataTransform.transform(train, meta, ranges)
 #    print(nnData)
+    print('Training Model '+str(i+1)+' ('+str(len(train))+' samples)')
     nn = NeuralNetwork.NeuralNetwork(epochs=epochs, hidden=hidden, learningRate=rate)
-    errors=nn.train(nnData, meta)
-    errors1.append(errors[0])
-    errors2.append(errors[1])
+    nn.train(nnData, gold, meta)
     models.append(nn)
     partitions.append(test)
     print()
 end=time.time()
 
 print('Results:')
-print('\tAverage error after 1 epoch=',sum(errors1)/len(errors1))
-print('\tAverage error after last epoch=',sum(errors2)/len(errors2))
+print('\tAverage error after 1 epoch=',[sum(abs(err) for err in errs)/len(models) for errs in zip(*(m.err1 for m in models))])
+print('\tAverage error after last epoch=',[sum(abs(err) for err in errs)/len(models) for errs in zip(*(m.errLast for m in models))])
 
 evaluators=[]
 ###evaluate results
 for i, model in enumerate(models):
     test=partitions[i].copy()
     preprocess.z_score(test, meta)
-    nnData=DataTransform.transform(test, meta, ranges)
+    nnData, goldLabels=DataTransform.transform(test, meta, ranges)
     #    print(nnData)
     results=model.classify(nnData, meta)
     #    print(results)
-    goldLabels=DataTransform.getGoldLabels(test, meta, ranges)
+    goldLabels=[np.argmax(l) for l in goldLabels]
     #    print(goldLabels)
     e=evaluate.Evaluator(goldLabels, results)
     e.confusionMatrices()

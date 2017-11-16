@@ -27,12 +27,12 @@ class NeuralNetwork:
         self.bh=np.random.rand(kwargs['hidden'],1)/5
         
         
-    def train(self, data, meta):
+    def train(self, data, labels, meta):
         ###initialize weight vectors
-        self.inputsize=sum(len(data[att][0]) for att in meta.names()[:-1])
+        self.inputsize=len(data[0])
 #        print(inputsize)
         self.Wh=np.random.rand(self.inputsize,self.hidden)
-        self.outputsize=len(data[meta.names()[-1]][0])
+        self.outputsize=len(labels[0])
         self.bo=np.random.rand(self.outputsize,1)
         self.Wo=np.random.rand(self.hidden,self.outputsize)
         for epoch in range(self.epochs):
@@ -43,24 +43,19 @@ class NeuralNetwork:
             else:
                 learningRate=self.learningRate
 #            print('Epoch '+str(epoch+1)+'\r')
-            for i in range(len(data[meta.names()[0]])):
+            for i,sample in enumerate(data):
                 ###get sample
-                Oi=[]
-                for t, att in enumerate(meta.names()[:-1]):
-                    if meta.types()[t]=='nominal':
-                        Oi+=data[att][i].tolist()
-                    else:
-                        Oi+=data[att][i]
+                Oi=sample
                 pred, Oh=self.classifySample(np.array(Oi).reshape((len(Oi),1)))
+                gold=labels[i]
 #                print(Oh)
     #            pred=pred.tolist()
 #                print(pred)
-                gold=data[meta.names()[-1]][i].tolist()
 #                print(gold)
                 
                 ###calculate errors and update weights
                 oErr=[pred[j]*(1-pred[j])*(gold[j]-pred[j]) for j in range(self.outputsize)]
-#                print(str(oErr)+'\n')
+#                print(str(oErr))
                 for j in range(self.outputsize):
                     for i in range(self.hidden):
                         self.Wo[i][j]+=learningRate*oErr[j]*Oh[i]
@@ -71,33 +66,25 @@ class NeuralNetwork:
                         self.Wh[i][j]+=learningRate*hErr[j]*Oi[i]
                     self.bh[j]+=learningRate*hErr[j]
 #            print(oErr)
-                avgErr+=sum(abs(e) for e  in oErr)/len(data[meta.names()[0]])
+                avgErr+=sum(abs(e) for e  in oErr)/len(oErr)
 #            print('AvgErr: ', avgErr)
             if avgErr<=self.minError:
                 print('Reached min error after ',epoch+1,' epochs')
                 epoch=self.epochs
                 break
             if epoch==0:
-#                print('AvgErr after 1 epoch:', avgErr)
-                err1=avgErr
+                print('Output Error after 1 epoch:', oErr)
+                self.err1=oErr
 #            avgErr=0
 #        if epoch==self.epochs-1:
 #            print('Reached maximum epochs')
-        err2=avgErr
-#        print('AvgErr after last epoch: ', avgErr)
-        return err1, err2
+        print('Output Error after last epoch:', oErr)
+        self.errLast=oErr
     
     def classify(self, data, meta):
 #        nnData=DataTransform.transform(data, meta)
         results=[]
-        for i in range(len(data[meta.names()[0]])):
-            nnSample=[]
-            for t, att in enumerate(meta.names()[:-1]):
-                if meta.types()[t]=='nominal':
-                    nnSample+=data[att][i].tolist()
-                else:
-                    nnSample+=data[att][i]
-#            print(nnSample)
+        for nnSample in data:
             classification=self.classifySample(np.array(nnSample).reshape(len(nnSample),1))[0]
 #            print(classification)
             results.append(np.argmax(classification))

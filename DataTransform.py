@@ -32,7 +32,23 @@ def transform(data, meta, ranges):
             tdata[att]=[[data[att][i]] for i in range(len(data[att]))]
     
 #    print(tdata)
-    return tdata
+    d=[]
+    for i in range(len(data)):
+        sample=[]
+        gold=[]
+        for t, att in enumerate(meta.names()[:-1]):
+            if meta.types()[t]=='nominal':
+                sample+=tdata[att][i].tolist()
+            else:
+                sample+=tdata[att][i]
+#        print(sample)
+        d.append(sample)
+    
+    gold=tdata[meta.names()[-1]].tolist()
+        
+#    print(d)
+#    print(gold)
+    return d, gold
 
 def getGoldLabels(data, meta, ranges):
     tdata=transform(data, meta, ranges)
