@@ -72,7 +72,7 @@ class NeuralNetwork:
                     self.bh[j]+=learningRate*hErr[j]
 #            print(oErr)
                 avgErr+=sum(abs(e) for e  in oErr)/len(data[meta.names()[0]])
-            print('AvgErr: ', avgErr)
+#            print('AvgErr: ', avgErr)
             if avgErr<=self.minError:
                 print('Reached min error after ',epoch+1,' epochs')
                 epoch=self.epochs
