@@ -7,7 +7,7 @@ Created on Fri Oct 27 18:21:04 2017
 
 import numpy as np
 import scipy.io.arff as arff
-import sys
+import argparse
 import time
 import partition
 import NeuralNetwork
@@ -16,7 +16,7 @@ import evaluate
 import preprocess
 
 ###get data from file
-fileName=sys.argv[1]
+fileName='adult-big.arff'
 f=open(fileName, 'r')
 data, meta = arff.loadarff(f)
 d = data.copy()
@@ -37,6 +37,15 @@ np.random.shuffle(d)
 partitions=partition.partition(d, 5)
 
 ###get training parameters
+parser = argparse.ArgumentParser()  
+parser.add_argument('-e', '--epochs', help='set number of epochs', default=10)
+parser.add_argument('-H', '--hidden', help='set number of hidden layer nodes', default=10)
+parser.add_argument('-r', '--rate', help='set learning rate', default=.2)
+args=parser.parse_args()
+epochs=args.epochs
+rate=args.rate
+hidden=args.hidden
+print('Running for ',epochs,' epochs, ',hidden,' hidden nodes, and with a learning rate of ',rate,'.')
 
 ###get range of each attribute
 ranges={}
@@ -61,7 +70,7 @@ for i in range(len(partitions)):
 #    print(train)
     nnData=DataTransform.transform(train, meta, ranges)
 #    print(nnData)
-    nn = NeuralNetwork.NeuralNetwork(epochs=10, hidden=100, learningRate=.2)
+    nn = NeuralNetwork.NeuralNetwork(epochs=epochs, hidden=hidden, learningRate=rate)
     errors=nn.train(nnData, meta)
     errors1.append(errors[0])
     errors2.append(errors[1])
