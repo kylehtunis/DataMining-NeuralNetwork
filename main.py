@@ -8,6 +8,7 @@ Created on Fri Oct 27 18:21:04 2017
 import numpy as np
 import scipy.io.arff as arff
 import sys
+import time
 import partition
 import NeuralNetwork
 import DataTransform
@@ -46,8 +47,11 @@ for i,att in enumerate(meta.names()):
         ranges[att]=['#']
 #ranges['native-country']=[b'North-America', b'Central-South-America', b'Europe', b'Asia', b'Africa', b'Oceania']
 
+start=time.time()
 ###preproces and train 10 models
 models=[]
+errors1=[]
+errors2=[]
 for i in range(len(partitions)):
     test=partitions.pop(0)
     testCopy=test.copy()
@@ -57,12 +61,20 @@ for i in range(len(partitions)):
 #    print(train)
     nnData=DataTransform.transform(train, meta, ranges)
 #    print(nnData)
-    nn = NeuralNetwork.NeuralNetwork(epochs=10, hidden=25, minError=.005, learningRate=1)
-    nn.train(nnData, meta)
+    nn = NeuralNetwork.NeuralNetwork(epochs=10, hidden=100, learningRate=.2)
+    errors=nn.train(nnData, meta)
+    errors1.append(errors[0])
+    errors2.append(errors[1])
     models.append(nn)
     partitions.append(test)
     print()
+end=time.time()
 
+print('Results:')
+print('\tAverage error after 1 epoch=',sum(errors1)/len(errors1))
+print('\tAverage error after last epoch=',sum(errors2)/len(errors2))
+
+evaluators=[]
 ###evaluate results
 for i, model in enumerate(models):
     test=partitions[i].copy()
@@ -76,8 +88,12 @@ for i, model in enumerate(models):
     e=evaluate.Evaluator(goldLabels, results)
     e.confusionMatrices()
     e.measures()
-    print('Accuracy='+str(e.getAccuracy()))
-    print('Macro Precision=',e.macroPrecision)
-    print('Macro Recall=',e.macroRecall)
-    print('Macro F1=',e.macroF1)
-    print()
+    evaluators.append(e)
+#    print('Accuracy='+str(e.getAccuracy()))
+#    print('Macro Precision=',e.macroPrecision)
+#    print('Macro Recall=',e.macroRecall)
+#    print('Macro F1=',e.macroF1)
+#    print()
+    
+print('\tAverage Macro F1=',sum(ev.macroF1 for ev in evaluators)/len(evaluators))
+print('\tRuntime=',end-start)
