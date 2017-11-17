@@ -56,15 +56,16 @@ class NeuralNetwork:
                 ###calculate errors and update weights
                 oErr=[pred[j]*(1-pred[j])*(gold[j]-pred[j]) for j in range(self.outputsize)]
 #                print(str(oErr))
-                for j in range(self.outputsize):
-                    for i in range(self.hidden):
-                        self.Wo[i][j]+=learningRate*oErr[j]*Oh[i]
-                    self.bo[j]+=learningRate*oErr[j]
+#                for j in range(self.outputsize):
+#                    for i in range(self.hidden):
+                self.Wo+=np.dot(np.reshape(Oh,(len(Oh),1)), np.reshape(np.dot(learningRate,oErr),(1,len(oErr))))
+#                print(np.dot(learningRate, np.reshape(oErr,(1, len(oErr)))))
+                self.bo+=np.dot(learningRate, np.reshape(oErr,(len(oErr),1)))
                 hErr=[Oh[j]*(1-Oh[j])*sum(oErr[k]*self.Wo[j][k] for k in range(len(oErr))) for j in range(self.hidden)]
-                for j in range(self.hidden):
-                    for i in range(self.inputsize):
-                        self.Wh[i][j]+=learningRate*hErr[j]*Oi[i]
-                    self.bh[j]+=learningRate*hErr[j]
+#                for j in range(self.hidden):
+#                    for i in range(self.inputsize):
+                self.Wh+=np.dot(np.reshape(Oi,(len(Oi),1)), np.reshape(np.dot(learningRate,hErr),(1,len(hErr))))
+                self.bh+=np.dot(learningRate, np.reshape(hErr,(len(hErr),1)))
 #            print(oErr)
                 avgErr+=sum(abs(e) for e  in oErr)/len(oErr)
 #            print('AvgErr: ', avgErr)
