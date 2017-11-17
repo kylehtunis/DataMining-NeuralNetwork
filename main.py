@@ -100,7 +100,7 @@ for i, model in enumerate(models):
 #    print('Accuracy='+str(e.getAccuracy()))
 #    print('Macro Precision=',e.macroPrecision)
 #    print('Macro Recall=',e.macroRecall)
-#    print('Macro F1=',e.macroF1)
+    print('\tFold',i+1,'Macro F1=',e.macroF1)
 #    print()
     
 print('\tAverage Macro F1=',sum(ev.macroF1 for ev in evaluators)/len(evaluators))

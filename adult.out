@@ -1,0 +1,41 @@
+Running for 10 epochs, 10 hidden nodes, and with a learning rate of 0.2
+
+Preprocessing
+
+Replaced 6465 missing values.
+
+Transforming Data for Model 1
+Training Model 1 (39073 samples)
+Output Error after 1 epoch: [0.0037153251281065759, -0.0038053021902236237]
+Output Error after last epoch: [0.00081918277191806832, -0.00082360607747141096]
+
+Transforming Data for Model 2
+Training Model 2 (39073 samples)
+Output Error after 1 epoch: [-0.13542377866430783, 0.1346241266185477]
+Output Error after last epoch: [-0.13179961294263884, 0.13185358171239858]
+
+Transforming Data for Model 3
+Training Model 3 (39074 samples)
+Output Error after 1 epoch: [0.0010319854292568948, -0.0010333665468588852]
+Output Error after last epoch: [7.4987672127335876e-05, -7.1994365083510802e-05]
+
+Transforming Data for Model 4
+Training Model 4 (39074 samples)
+Output Error after 1 epoch: [0.12783362836575507, -0.12789492240737999]
+Output Error after last epoch: [0.14078134619514548, -0.14080114843665911]
+
+Transforming Data for Model 5
+Training Model 5 (39074 samples)
+Output Error after 1 epoch: [0.029021781936716843, -0.029449488151222208]
+Output Error after last epoch: [0.039333412963974149, -0.039221993588517745]
+
+Results:
+	Average error after 1 epoch= [0.059405299904828644, 0.059361441182846489]
+	Average error after last epoch= [0.062561708509160777, 0.062554464836026072]
+	Fold 1 Macro F1= 0.8026635158637281
+	Fold 2 Macro F1= 0.7911844225260196
+	Fold 3 Macro F1= 0.7884265192079388
+	Fold 4 Macro F1= 0.8104697273417842
+	Fold 5 Macro F1= 0.777081907767242
+	Average Macro F1= 0.7939652185413426
+	Runtime= 484.9179456233978
