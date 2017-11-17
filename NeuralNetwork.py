@@ -67,15 +67,15 @@ class NeuralNetwork:
                 self.Wh+=np.dot(np.reshape(Oi,(len(Oi),1)), np.reshape(np.dot(learningRate,hErr),(1,len(hErr))))
                 self.bh+=np.dot(learningRate, np.reshape(hErr,(len(hErr),1)))
 #            print(oErr)
-                avgErr+=sum(abs(e) for e  in oErr)/len(oErr)
+                avgErr+=sum(abs(e) for e in oErr)/len(oErr)/len(data)
 #            print('AvgErr: ', avgErr)
+            if epoch==0:
+                print('Output Error after 1 epoch:', oErr)
+                self.err1=oErr
             if avgErr<=self.minError:
                 print('Reached min error after ',epoch+1,' epochs')
                 epoch=self.epochs
                 break
-            if epoch==0:
-                print('Output Error after 1 epoch:', oErr)
-                self.err1=oErr
 #            avgErr=0
 #        if epoch==self.epochs-1:
 #            print('Reached maximum epochs')
